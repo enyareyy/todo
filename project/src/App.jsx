@@ -13,6 +13,7 @@ const App = () => {
     {title:"Go to gym", done:false, important:false, id:3},
     {title:"Have a dinner", done:false, important:false, id:4},
   ]
+  
 )
 const onDelTodo=(id)=>{
   console.log(id);
@@ -43,14 +44,33 @@ const onImportant =(id)=>{
   setTodoData(updated);
 }
 
-  return (
-    <div className='container'>
-      <AppTodo/>
-      <TodoSearch/>
-      <TodoList todo={todoData} onDel={onDelTodo} onD={onDone} onImp={onImportant}/>
-      <TodoAdd/>
-    </div>
-  )
+const onAddTodo=(text)=>{
+const ids=todoData.map(el=>el.id)
+const newTodo={
+  title:text,
+  done:false,
+  important: false,
+  id:ids.at(-1)+1 || 1
+}
+setTodoData([...todoData,newTodo])
+}
+
+const doneCount = todoData.filter(todo => todo.done).length;
+const todoCount = todoData.length - doneCount;
+
+
+return (
+  <div className='container'>
+    <AppTodo done={doneCount} todo={todoCount} />
+    <TodoSearch />
+      {todoData.length === 0 ? (
+        <h2 className="no-todo">No ToDo</h2>
+      ) : (
+        <TodoList todo={todoData} onDel={onDelTodo} onD={onDone} onImp={onImportant}/>
+      )}
+    <TodoAdd onAdd={onAddTodo} />
+  </div>
+)
 }
 
 export default App

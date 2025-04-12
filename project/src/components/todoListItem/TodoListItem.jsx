@@ -13,6 +13,7 @@ export default class TodoListItem extends Component {
                 clazzImportant+=`important`
             }
     return (
+      
       <ul>
         <li className='list-group-item d-flex align-items-center'>
         <span className={`flex-grow-1 ${clazz} ${clazzImportant}`} onClick={()=>onD(id)} >{title}</span>
