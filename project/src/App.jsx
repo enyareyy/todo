@@ -14,7 +14,41 @@ const App = () => {
     {title:"Have a dinner", done:false, important:false, id:4},
   ]
   
+  
 )
+const [btnStatus, setBtnStatus]=useState('All')
+const [text, onSetText]=useState("");
+const [editTodoId, setEditTodoId] = useState(null);
+const [editValue, setEditValue] = useState("");
+
+
+const search = (todos, textSearch) => {
+  if(textSearch.length === 0 || textSearch.trim() === ""){
+    return todos;
+  }
+  return todos.filter(todo => {
+    return todo.title.toLowerCase().indexOf(textSearch.toLowerCase()) > -1;
+  });
+}
+
+const onSetBtn=(name)=>{
+  setBtnStatus(name)
+}
+const filter=(todos, btnSt)=>{
+  switch(btnSt){
+    case'All':
+    return todos
+    case 'Active':
+      return todos.filter(todo=>!todo.done)
+      case 'Done': 
+      return todos.filter(todo=>todo.done)
+      default:
+        return todos
+  }
+}
+
+const updData=filter(search(todoData, text), btnStatus)
+
 const onDelTodo=(id)=>{
   console.log(id);
   const filetedTodo=todoData.filter(todo=>todo.id!==id)
@@ -34,15 +68,34 @@ const onDone = (id) => {
 
 const onImportant =(id)=>{
   // console.log(id `imp`);
-  
-  const updated = todoData.map(todo => { 
-    if (todo.id === id) { 
-      return { ...todo, important: !todo.important }; 
+  const el=todoData.find(el=>el.id==id)
+  const updEl={...el, important:!el.important}
+  const index=todoData.findIndex(el=>el.id==id)
+  const before=todoData.slice(0,  index)
+  const after=todoData.slice(index+1);
+
+  const updTodoData=[...before, updEl, ...after]
+  setTodoData(updTodoData)
+}
+
+const onEdit = (id) => {
+  const todo = todoData.find(el => el.id === id);
+  setEditTodoId(id);
+  setEditValue(todo.title);
+};
+
+const onUpdateTodo = (newText) => {
+  const updated = todoData.map(todo => {
+    if (todo.id === editTodoId) {
+      return { ...todo, title: newText };
     }
-    return todo; 
+    return todo;
   });
   setTodoData(updated);
-}
+  setEditTodoId(null);
+  setEditValue("");
+};
+
 
 const onAddTodo=(text)=>{
 const ids=todoData.map(el=>el.id)
@@ -62,13 +115,18 @@ const todoCount = todoData.length - doneCount;
 return (
   <div className='container'>
     <AppTodo done={doneCount} todo={todoCount} />
-    <TodoSearch />
+    <TodoSearch btnStatus={btnStatus} onSetBtn={onSetBtn} onSetText={onSetText}/>
       {todoData.length === 0 ? (
         <h2 className="no-todo">No ToDo</h2>
       ) : (
-        <TodoList todo={todoData} onDel={onDelTodo} onD={onDone} onImp={onImportant}/>
+        <TodoList todo={updData} onDel={onDelTodo} onD={onDone} onImp={onImportant} onE={onEdit}/>
       )}
-    <TodoAdd onAdd={onAddTodo} />
+    <TodoAdd
+  onAdd={onAddTodo}
+  editValue={editValue}
+  setEditValue={setEditValue}
+  onUpdate={onUpdateTodo}
+  isEditing={editTodoId !== null}/>
   </div>
 )
 }

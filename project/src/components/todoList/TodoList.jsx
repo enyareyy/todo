@@ -7,7 +7,7 @@ const TodoList = (props) => {
   return (
     <ul className='list-group mt-1 mb-1'>
       {props.todo.map(el=>(
-        <TodoListItem {...el} onDel={props.onDel} onD={props.onD} onImp={props.onImp}/> 
+        <TodoListItem {...el} onDel={props.onDel} onD={props.onD} onImp={props.onImp} onE={props.onE}/> 
       )
       )}
     </ul>
